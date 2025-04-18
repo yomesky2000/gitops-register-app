@@ -3,7 +3,7 @@ pipeline {
         label "Jenkins-Slave" 
     }
     environment {
-        APP_NAME = "register-app-pipeline"
+        APP_NAME = "nextgen-app-pipeline"
     }
     stages {
         stage("Cleanup Workspace") {
