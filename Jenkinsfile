@@ -25,7 +25,7 @@ pipeline {
             steps {
                 sh """
                     cat deployment.yaml
-                    sed -i 's/${APP_NAME}.*/${APP_NAME}:${BUILD_NUMBER}/g' deployment.yaml
+                    sed -i "s|image:.*|image: docker.io/ginger2000/register-app-pipeline:${BUILD_NUMBER}|g" deployment.yaml
                     cat deployment.yaml
                 """
                 echo "Container tags updated successfully"
