@@ -1,7 +1,12 @@
 pipeline {
-    agent { label "Jenkins-Agent" }
+    agent { 
+        label "Jenkins-Slave" 
+    }
+
     environment {
-              APP_NAME = "register-app-pipeline"
+        APP_NAME    = "nextgen-app-pipeline"
+        IMAGE_TAG   = "1.0.0-${BUILD_NUMBER}" // Or override this with a parameter
+        IMAGE_NAME  = "ginger2000/nextgen-app" // Define if your image is hosted on DockerHub
     }
 
     stages {
@@ -11,35 +16,49 @@ pipeline {
             }
         }
 
-        stage("Checkout from SCM") {
-               steps {
-                   git branch: 'main', credentialsId: 'github', url: 'https://github.com/Ashfaque-9x/gitops-register-app'
-               }
+        stage("SCM Checkout") {
+            steps {
+                git branch: 'main', 
+                    credentialsId: 'GitHub-Token', 
+                    url: 'https://github.com/yomesky2000/gitops-register-app'
+                echo "Continuous Deployment GitOps Repo Cloned Successfully"
+            }
         }
 
         stage("Update the Deployment Tags") {
             steps {
-                sh """
-                   cat deployment.yaml
-                   sed -i 's/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g' deployment.yaml
-                   cat deployment.yaml
-                """
+                script {
+                    def newTag = "${IMAGE_NAME}:${IMAGE_TAG}"
+                    echo "Updating deployment.yaml with image: ${newTag}"
+                }
+
+                sh '''
+                    echo "Before update:"
+                    cat deployment.yaml
+
+                    # Update line that contains the image for APP_NAME
+                    sed -i "s|image: .${APP_NAME}:.|image: ${IMAGE_NAME}:${IMAGE_TAG}|g" deployment.yaml
+
+                    echo "After update:"
+                    cat deployment.yaml
+                '''
+                echo "Container tag updated successfully"
             }
         }
 
         stage("Push the changed deployment file to Git") {
             steps {
                 sh """
-                   git config --global user.name "Ashfaque-9x"
-                   git config --global user.email "ashfaque.s510@gmail.com"
-                   git add deployment.yaml
-                   git commit -m "Updated Deployment Manifest"
+                    git config --global user.name "Ginger"
+                    git config --global user.email "ginger0@gmail.com"
+                    git add deployment.yaml
+                    git commit -m "Updated Deployment Manifest with new tag ${IMAGE_TAG}" || echo "No changes to commit"
                 """
                 withCredentials([gitUsernamePassword(credentialsId: 'github', gitToolName: 'Default')]) {
-                  sh "git push https://github.com/Ashfaque-9x/gitops-register-app main"
+                    sh "git push https://github.com/yomesky2000/gitops-register-app main"
+                    echo "Pushed updated changes to GitOps repo"
                 }
             }
         }
-      
     }
 }
