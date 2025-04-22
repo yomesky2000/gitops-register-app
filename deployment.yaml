@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: register-app
-          image: ginger2000/nextgen-app:1.0.0-71
+          image: ginger2000/nextgen-app:215
           resources:
             limits:
               memory: "256Mi"
