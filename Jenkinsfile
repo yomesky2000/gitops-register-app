@@ -24,9 +24,14 @@ pipeline {
         stage("Update the Deployment Tags") {
             steps {
                 sh """
+                    echo "Checking deployment.yaml file content before update:"
                     cat deployment.yaml
-                    sed -i "s/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g" deployment.yaml
+                    perl -pe "s|${APP_NAME}.*|${APP_NAME}:${IMAGE_TAG}|g" deployment.yaml > tmp.yaml
+                    mv tmp.yaml deployment.yaml
+                    echo "Checking deployment.yaml file content after update"
                     cat deployment.yaml
+                    #sed -i "s/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g" deployment.yaml
+                    #cat deployment.yaml
                 """
                 echo "Container tags updated successfully"
             }
