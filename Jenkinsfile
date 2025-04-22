@@ -38,9 +38,8 @@ pipeline {
                     cat deployment.yaml
 
                     # Update line that contains the image for APP_NAME
-                    perl -pe 's|(image: .*/${APP_NAME}:).*|\\1${buildNumber}|' deployment.yaml > tmp.yaml
+                    perl -pe "s|${APP_NAME}.*|${APP_NAME}:${IMAGE_TAG}|g" deployment.yaml > tmp.yaml
                     mv tmp.yaml deployment.yaml
-                    #perl -pe "s|${APP_NAME}.*|${APP_NAME}:${IMAGE_TAG}|g" deployment.yaml > tmp.yaml
                     #sed -i 's/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g' deployment.yaml
 
                     echo "After update:"
