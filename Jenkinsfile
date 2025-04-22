@@ -4,9 +4,9 @@ pipeline {
     }
 
     environment {
-        APP_NAME    = "nextgen-app"
+        APP_NAME    = "register-app-pipeline"
         IMAGE_TAG   = "1.0.0-${BUILD_NUMBER}" // Or override this with a parameter
-        IMAGE_NAME  = "ginger2000/nextgen-app" // Define if your image is hosted on DockerHub
+        IMAGE_NAME  = "ginger2000/register-app-pipeline" // Define if your image is hosted on DockerHub
     }
 
     stages {
@@ -37,9 +37,7 @@ pipeline {
                     cat deployment.yaml
 
                     # Update line that contains the image for APP_NAME
-                    perl -pe "s|${APP_NAME}.*|${APP_NAME}:${IMAGE_TAG}|g" deployment.yaml > tmp.yaml
-                    mv tmp.yaml deployment.yaml
-                    #sed -i 's/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g' deployment.yaml
+                    sed -i "s|image: .${APP_NAME}:.|image: ${IMAGE_NAME}:${IMAGE_TAG}|g" deployment.yaml
 
                     echo "After update:"
                     cat deployment.yaml
