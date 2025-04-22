@@ -28,8 +28,7 @@ pipeline {
         stage("Update the Deployment Tags") {
             steps {
                 script {
-                    #def newTag = "${IMAGE_NAME}:${IMAGE_TAG}"
-                    def buildNumber = env.BUILD_NUMBER
+                    def newTag = "${IMAGE_NAME}:${IMAGE_TAG}"
                     echo "Updating deployment.yaml with image: ${newTag}"
                 }
 
