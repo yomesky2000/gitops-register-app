@@ -4,7 +4,7 @@ pipeline {
     }
 
     environment {
-        APP_NAME    = "nextgen-app-pipeline"
+        APP_NAME    = "nextgen-app"
         IMAGE_TAG   = "1.0.0-${BUILD_NUMBER}" // Or override this with a parameter
         IMAGE_NAME  = "ginger2000/nextgen-app" // Define if your image is hosted on DockerHub
     }
