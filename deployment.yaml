@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: register-app
-          image: ginger2000/register-app-pipeline:242
+          image: ginger2000/register-app-pipeline:225
           resources:
             limits:
               memory: "256Mi"
