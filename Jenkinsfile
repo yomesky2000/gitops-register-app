@@ -1,6 +1,6 @@
 pipeline {
-    agent { 
-        label "Jenkins-Slave" 
+    agent {
+        label "Jenkins-Slave"
     }
 
     environment {
@@ -17,8 +17,8 @@ pipeline {
 
         stage("SCM Checkout") {
             steps {
-                git branch: 'main', 
-                    credentialsId: 'GitHub-Token', 
+                git branch: 'main',
+                    credentialsId: 'GitHub-Token',
                     url: 'https://github.com/yomesky2000/gitops-register-app'
                 echo "Continuous Deployment GitOps Repo Cloned Successfully"
             }
@@ -44,19 +44,36 @@ pipeline {
 
         stage("Push the changed deployment file to Git") {
             steps {
-                sh """
-                    git config --global user.name "Ginger"
-                    git config --global user.email "ginger0@gmail.com"
-                    git add deployment.yaml || true
+                script {
+                    sh """
+                        git config --global user.name "Ginger"
+                        git config --global user.email "ginger0@gmail.com"
+                        git add deployment.yaml || true
+                    """
 
-                    if ! git diff --cached --quiet; then
-                        git commit -m "Updated Deployment Manifest to ${IMAGE_TAG}"
-                        git push https://github.com/yomesky2000/gitops-register-app main
-                        echo "Pushed updated deployment.yaml to GitHub"
-                    else
+                    // Only commit and push if there are changes
+                    def hasChanges = sh(
+                        script: 'git diff --cached --quiet || echo "changed"',
+                        returnStdout: true
+                    ).trim()
+
+                    if (hasChanges == "changed") {
+                        sh "git commit -m 'Updated Deployment Manifest to ${IMAGE_TAG}'"
+
+                        withCredentials([usernamePassword(
+                            credentialsId: 'GitHub-Token',
+                            usernameVariable: 'GIT_USERNAME',
+                            passwordVariable: 'GIT_PASSWORD'
+                        )]) {
+                            sh """
+                                git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/yomesky2000/gitops-register-app main
+                            """
+                            echo "Pushed updated deployment.yaml to GitHub"
+                        }
+                    } else {
                         echo "No changes to commit."
-                    fi
-                """
+                    }
+                }
             }
         }
     }
