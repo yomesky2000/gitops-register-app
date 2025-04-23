@@ -26,7 +26,7 @@ pipeline {
                 sh """
                     echo "Validate existing docker image version"
                     cat deployment.yaml
-                    sed -i 's/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g' deployment.yaml
+                    sed -i "s|${APP_NAME}.*|${APP_NAME}:${IMAGE_TAG}|g" deployment.yaml
                     echo "Validate newly updated docker image version after modifying deployment.yaml file"
                     cat deployment.yaml
                 """
