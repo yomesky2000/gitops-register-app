@@ -5,7 +5,7 @@ pipeline {
 
     environment {
         APP_NAME = "register-app-pipeline"
-        IMAGE_TAG = "1.0.0-${BUILD_NUMBER}"
+        IMAGE_TAG = "" 
     }
 
     stages {
@@ -21,6 +21,25 @@ pipeline {
                     credentialsId: 'GitHub-Token',
                     url: 'https://github.com/yomesky2000/gitops-register-app'
                 echo "Continuous Deployment GitOps Repo Cloned Successfully"
+            }
+        }
+
+        stage("Get Latest Docker Image Tag") {
+            steps {
+                script {
+                    def imageName = "ginger2000/register-app-pipeline"
+                    def response = sh(
+                        script: """curl -s https://hub.docker.com/v2/repositories/${imageName}/tags?page_size=1 | jq -r '.results[0].name'""",
+                        returnStdout: true
+                    ).trim()
+
+                    if (response) {
+                        env.IMAGE_TAG = "${response}"
+                        echo "Fetched latest Docker image tag: ${env.IMAGE_TAG}"
+                    } else {
+                        echo "Failed to fetch image tag. Falling back to Jenkins BUILD_NUMBER: ${env.IMAGE_TAG}"
+                    }
+                }
             }
         }
 
