@@ -5,7 +5,6 @@ pipeline {
 
     environment {
         APP_NAME = "register-app-pipeline"
-        IMAGE_TAG = "" 
     }
 
     stages {
@@ -34,7 +33,7 @@ pipeline {
                     ).trim()
 
                     if (response) {
-                        env.IMAGE_TAG = "${response}"
+                        env.IMAGE_TAG = response
                         echo "Fetched latest Docker image tag: ${env.IMAGE_TAG}"
                     } else {
                         echo "Failed to fetch image tag. Falling back to Jenkins BUILD_NUMBER: ${env.IMAGE_TAG}"
