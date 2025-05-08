@@ -16,7 +16,7 @@ pipeline {
 
         stage("Checkout from SCM") {
             steps {
-                git branch: 'main', credentialsId: 'github', url: 'https://github.com/yomesky2000/gitops-register-app'
+                git branch: 'main', credentialsId: 'GitHub-Token', url: 'https://github.com/yomesky2000/gitops-register-app'
             }
         }
 
